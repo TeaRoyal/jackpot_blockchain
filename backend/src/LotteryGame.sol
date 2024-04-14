@@ -11,13 +11,14 @@ contract LotteryGame is VRFConsumerBaseV2, Ownable {
     address vrfCoordinator; 
     bytes32 keyHash = 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c; 
     uint32 callbackGasLimit=200000;  
-    uint16 requestConfirmations=10; 
-    uint32 numWords=1;  
+    uint16 requestConfirmations=10;     // How many confirmations the Chainlink node should wait before responding. Must be > minimumRequestBlockConfirmations limit
+    uint32 numWords=1;                  // How many random values to request.
 
     // Lottery Variables
     uint256 public ticketPrice = 0.01 ether;
     uint256 public entryFee = 0.05 ether;
     uint256 public potSize;
+    // TED: Do the following need to have "payable" keywords as winner gets the transfer
     address[] public players;
     mapping(address => uint256) public playerEntries;  // Keep track of chosen numbers
     uint256 public lotteryStartTime;
@@ -66,6 +67,7 @@ contract LotteryGame is VRFConsumerBaseV2, Ownable {
         emit LotteryStarted(lotteryStartTime);
     }
 
+    // TED: How is this being triggered? I saw an example using Chainlink Alarm Clock Oracle or is it easier for demo purpose?
     // Internal function triggered when time is up, requests randomness
     function _pickWinner() internal {
         require(lotteryState == LOTTERY_STATE.OPEN, "Lottery is not open");
